@@ -104,33 +104,38 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         When setting a password encoder password must be replaced.
 
         Original configuration:
-            - .password("{noop}password")
+            - .password("{noop}password") USER role
         With NoOp
-            - .password("password")
+            - .password("password") USER role
         With LDAP
-            - .password("{SSHA}l57TAjmtALxaKMK+ORG4w7YVCISxyb8QTyDgXQ==")
+            - .password("{SSHA}l57TAjmtALxaKMK+ORG4w7YVCISxyb8QTyDgXQ==") USER role
         With SHA256
-            - .password("76266b247e5720a894839fc12b313109e7332bc567b89fe5134bfbf264eed40431606b026d83f387")
+            - .password("76266b247e5720a894839fc12b313109e7332bc567b89fe5134bfbf264eed40431606b026d83f387") USER role
         With BCrypt
-            - .password("$2a$10$ltO.Q32U5Twf00daKEgQSuC9sKIkr8a7zXYPDqn3oG.K63IZcvpMG")
+            - .password("$2a$10$ltO.Q32U5Twf00daKEgQSuC9sKIkr8a7zXYPDqn3oG.K63IZcvpMG") USER role
         With Delegating Password Encoder
             - .password("{bcrypt}$2a$10$sIryYMfq8BA9gupSlmPsXOwNUtum0LbDyoJV6XZi4PGbOMVO6LYh.") ADMIN role
             - .password("{sha256}a7eda2f4237fb0724d0770cca0af05038c837c009850fa743bd3ad7b6ca5fc23c2437b72ab5e958f") USER role
             - .password("{ldap}{SSHA}6tPxjqd+J9VyQXBnhVR9ffyJbwQZRYbn9bXEdQ==") CUSTOMER role
+        With Custom Delegating Password Encoder
+            - .password("{bcrypt}$2a$10$KEBTpOyvlhraKTsaP0yctuxJkEndbFab7cWV9JDZS2NE6cZnaGrHu") ADMIN role
+            - .password("{bcrypt}$2a$10$Cb2KNiI4KSpDOMy9h82zGufO0ZdDLQIjP7Qzy4wqPBYQv88OwYp0O") USER role
+            - .password("{bcrypt15}$2a$15$aS40Yic3n0PnLyIvchEGyO295AWVs9IQYV65K0TkSO7./lX7.5s8C") CUSTOMER role
+
     */
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication()
                 .withUser("spring")
-                .password("{bcrypt}$2a$10$sIryYMfq8BA9gupSlmPsXOwNUtum0LbDyoJV6XZi4PGbOMVO6LYh.")
+                .password("{bcrypt}$2a$10$KEBTpOyvlhraKTsaP0yctuxJkEndbFab7cWV9JDZS2NE6cZnaGrHu")
                 .roles("ADMIN")
                 .and()
                 .withUser("user")
-                .password("{sha256}a7eda2f4237fb0724d0770cca0af05038c837c009850fa743bd3ad7b6ca5fc23c2437b72ab5e958f")
+                .password("{bcrypt}$2a$10$Cb2KNiI4KSpDOMy9h82zGufO0ZdDLQIjP7Qzy4wqPBYQv88OwYp0O")
                 .roles("USER")
                 .and()
                 .withUser("scott")
-                .password("{ldap}{SSHA}6tPxjqd+J9VyQXBnhVR9ffyJbwQZRYbn9bXEdQ==")
+                .password("{bcrypt15}$2a$15$aS40Yic3n0PnLyIvchEGyO295AWVs9IQYV65K0TkSO7./lX7.5s8C")
                 .roles("CUSTOMER");
     }
 
