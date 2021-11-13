@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.LdapShaPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 @Configuration
@@ -25,9 +26,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return NoOpPasswordEncoder.getInstance();
     }*/
 
+    /* LDAP Password Encoder
     @Bean
     PasswordEncoder passwordEncoder() {
         return new LdapShaPasswordEncoder();
+    }*/
+
+    @Bean
+    PasswordEncoder passwordEncoder() {
+        return new StandardPasswordEncoder();
     }
 
     /*
@@ -72,23 +79,29 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic();
     }
 
-    /* In Memory Authentication using Authentication Fluent API. This is more elegant than using an UserDetailsService bean */
+    /* In Memory Authentication using Authentication Fluent API. This is more elegant than using an UserDetailsService bean
+        When setting a password encoder password must be replaced.
+
+        Original configuration:
+            - .password("{noop}password")
+        With NoOp
+            - .password("password")
+        With LDAP
+            - .password("{SSHA}l57TAjmtALxaKMK+ORG4w7YVCISxyb8QTyDgXQ==")
+    */
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication()
                 .withUser("spring")
-                //.password("{noop}guru") We are using a PasswordEncoder bean configured as NoOp
-                .password("guru")
+                .password("c433e80abc76d30fe75617c147941c28b9b810705578ae30c84f93b8d3c4028336262b1460763c4b")
                 .roles("ADMIN")
                 .and()
                 .withUser("user")
-                //.password("{noop}password")
-                .password("{SSHA}l57TAjmtALxaKMK+ORG4w7YVCISxyb8QTyDgXQ==")
+                .password("76266b247e5720a894839fc12b313109e7332bc567b89fe5134bfbf264eed40431606b026d83f387")
                 .roles("USER")
                 .and()
                 .withUser("scott")
-                //.password("{noop}tiger")
-                .password("{SSHA}TnEJkIpdp6blxEL2bD09G2q3A351BqKjTX9WhA==")
+                .password("65c8f495dc6d773cdccebfd402b35072688ac5f148ac2046400078ec3cc93fb5e22952bcc3fded59")
                 .roles("CUSTOMER");
     }
 
