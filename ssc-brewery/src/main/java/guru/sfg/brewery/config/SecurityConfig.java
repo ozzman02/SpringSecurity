@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.LdapShaPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
@@ -18,9 +19,15 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    /* NoOp Password Encoder
     @Bean
     PasswordEncoder passwordEncoder() {
         return NoOpPasswordEncoder.getInstance();
+    }*/
+
+    @Bean
+    PasswordEncoder passwordEncoder() {
+        return new LdapShaPasswordEncoder();
     }
 
     /*
@@ -76,12 +83,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .withUser("user")
                 //.password("{noop}password")
-                .password("password")
+                .password("{SSHA}l57TAjmtALxaKMK+ORG4w7YVCISxyb8QTyDgXQ==")
                 .roles("USER")
                 .and()
                 .withUser("scott")
                 //.password("{noop}tiger")
-                .password("tiger")
+                .password("{SSHA}TnEJkIpdp6blxEL2bD09G2q3A351BqKjTX9WhA==")
                 .roles("CUSTOMER");
     }
 
