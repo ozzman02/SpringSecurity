@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.LdapShaPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,9 +33,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new LdapShaPasswordEncoder();
     }*/
 
+    /* SHA256 Password Encoder
     @Bean
     PasswordEncoder passwordEncoder() {
         return new StandardPasswordEncoder();
+    }*/
+
+    @Bean
+    PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     /*
@@ -88,20 +95,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             - .password("password")
         With LDAP
             - .password("{SSHA}l57TAjmtALxaKMK+ORG4w7YVCISxyb8QTyDgXQ==")
+        With SHA256
+            - .password("76266b247e5720a894839fc12b313109e7332bc567b89fe5134bfbf264eed40431606b026d83f387")
+        With BCrypt
+            - .password("$2a$10$ltO.Q32U5Twf00daKEgQSuC9sKIkr8a7zXYPDqn3oG.K63IZcvpMG")
     */
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication()
                 .withUser("spring")
-                .password("c433e80abc76d30fe75617c147941c28b9b810705578ae30c84f93b8d3c4028336262b1460763c4b")
+                .password("$2a$10$Rg3IoI.8byXQtyudj3j0/eISY7tBnOBzxrFb9Wi/Ruhz7aa5l9X2u")
                 .roles("ADMIN")
                 .and()
                 .withUser("user")
-                .password("76266b247e5720a894839fc12b313109e7332bc567b89fe5134bfbf264eed40431606b026d83f387")
+                .password("$2a$10$ltO.Q32U5Twf00daKEgQSuC9sKIkr8a7zXYPDqn3oG.K63IZcvpMG")
                 .roles("USER")
                 .and()
                 .withUser("scott")
-                .password("65c8f495dc6d773cdccebfd402b35072688ac5f148ac2046400078ec3cc93fb5e22952bcc3fded59")
+                .password("$2a$10$cU3wWZfPpFBKy.4aBo96YezS1Rx6TAg6m6JpRJTiNZpGcRbj6kgqK")
                 .roles("CUSTOMER");
     }
 
