@@ -1,9 +1,12 @@
 package guru.sfg.brewery.config;
 
+import guru.sfg.brewery.security.RestHeaderAuthFilter;
+import guru.sfg.brewery.security.RestUrlAuthFilter;
 import guru.sfg.brewery.security.SfgPasswordEncoderFactories;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -18,6 +21,8 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -53,6 +58,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }*/
 
+    public RestHeaderAuthFilter restHeaderAuthFilter(AuthenticationManager authenticationManager) {
+        RestHeaderAuthFilter filter = new RestHeaderAuthFilter(new AntPathRequestMatcher("/api/**"));
+        filter.setAuthenticationManager(authenticationManager);
+        return filter;
+    }
+
+    public RestUrlAuthFilter restUrlAuthFilter(AuthenticationManager authenticationManager){
+        RestUrlAuthFilter filter = new RestUrlAuthFilter(new AntPathRequestMatcher("/api/**"));
+        filter.setAuthenticationManager(authenticationManager);
+        return filter;
+    }
+
     @Bean
     PasswordEncoder passwordEncoder() {
         return SfgPasswordEncoderFactories.createDelegatingPasswordEncoder();
@@ -86,6 +103,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .csrf().disable();
+        http
+                .addFilterBefore(restHeaderAuthFilter(authenticationManager()), UsernamePasswordAuthenticationFilter.class);
+        http
+                .addFilterBefore(restUrlAuthFilter(authenticationManager()), UsernamePasswordAuthenticationFilter.class);
+        http
                 .authorizeRequests(authorize -> {
                     authorize
                             .antMatchers("/", "/webjars/**", "/login", "/resources/**").permitAll()
@@ -98,6 +121,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .formLogin().and()
                 .httpBasic();
+
     }
 
     /* In Memory Authentication using Authentication Fluent API. This is more elegant than using an UserDetailsService bean
@@ -105,18 +129,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         Original configuration:
             - .password("{noop}password") USER role
+
         With NoOp
             - .password("password") USER role
+
         With LDAP
             - .password("{SSHA}l57TAjmtALxaKMK+ORG4w7YVCISxyb8QTyDgXQ==") USER role
+
         With SHA256
             - .password("76266b247e5720a894839fc12b313109e7332bc567b89fe5134bfbf264eed40431606b026d83f387") USER role
+
         With BCrypt
             - .password("$2a$10$ltO.Q32U5Twf00daKEgQSuC9sKIkr8a7zXYPDqn3oG.K63IZcvpMG") USER role
+
         With Delegating Password Encoder
             - .password("{bcrypt}$2a$10$sIryYMfq8BA9gupSlmPsXOwNUtum0LbDyoJV6XZi4PGbOMVO6LYh.") ADMIN role
             - .password("{sha256}a7eda2f4237fb0724d0770cca0af05038c837c009850fa743bd3ad7b6ca5fc23c2437b72ab5e958f") USER role
             - .password("{ldap}{SSHA}6tPxjqd+J9VyQXBnhVR9ffyJbwQZRYbn9bXEdQ==") CUSTOMER role
+
         With Custom Delegating Password Encoder
             - .password("{bcrypt}$2a$10$KEBTpOyvlhraKTsaP0yctuxJkEndbFab7cWV9JDZS2NE6cZnaGrHu") ADMIN role
             - .password("{bcrypt}$2a$10$Cb2KNiI4KSpDOMy9h82zGufO0ZdDLQIjP7Qzy4wqPBYQv88OwYp0O") USER role
