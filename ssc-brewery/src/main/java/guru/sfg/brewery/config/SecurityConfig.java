@@ -1,8 +1,10 @@
 package guru.sfg.brewery.config;
 
+import guru.sfg.brewery.security.JpaUserDetailsService;
 import guru.sfg.brewery.security.RestHeaderAuthFilter;
 import guru.sfg.brewery.security.RestUrlAuthFilter;
 import guru.sfg.brewery.security.SfgPasswordEncoderFactories;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -157,6 +159,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             - .password("{bcrypt15}$2a$15$aS40Yic3n0PnLyIvchEGyO295AWVs9IQYV65K0TkSO7./lX7.5s8C") CUSTOMER role
 
     */
+    /* In Memory Authentication
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication()
@@ -171,7 +174,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .withUser("scott")
                 .password("{bcrypt15}$2a$15$aS40Yic3n0PnLyIvchEGyO295AWVs9IQYV65K0TkSO7./lX7.5s8C")
                 .roles("CUSTOMER");
-    }
+    }*/
+
+    /*  This is one way of using the Custom User Details Service.
+    @Autowired
+    JpaUserDetailsService jpaUserDetailsService;
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(this.jpaUserDetailsService).passwordEncoder(passwordEncoder());
+    } */
 
     /*@Override
     @Bean
