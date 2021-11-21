@@ -18,7 +18,7 @@ public class CustomerControllerIT extends BaseIT {
 
     @DisplayName("List Customers")
     @Nested
-    class ListCustomers{
+    class ListCustomers {
         @ParameterizedTest(name = "#{index} with [{arguments}]")
         @MethodSource("guru.sfg.brewery.web.controllers.BeerControllerIT#getStreamAdminCustomer")
         void testListCustomersAUTH(String user, String pwd) throws Exception {
@@ -43,13 +43,13 @@ public class CustomerControllerIT extends BaseIT {
         }
     }
 
-    /*@DisplayName("Add Customers")
+    @DisplayName("Add Customers")
     @Nested
     class AddCustomers {
 
         @Rollback
         @Test
-        void processCreationForm() throws Exception{
+        void processCreationForm() throws Exception {
             mockMvc.perform(post("/customers/new")
                             .param("customerName", "Foo Customer")
                             .with(httpBasic("spring", "guru")))
@@ -59,7 +59,7 @@ public class CustomerControllerIT extends BaseIT {
         @Rollback
         @ParameterizedTest(name = "#{index} with [{arguments}]")
         @MethodSource("guru.sfg.brewery.web.controllers.BeerControllerIT#getStreamNotAdmin")
-        void processCreationFormNOTAUTH(String user, String pwd) throws Exception{
+        void processCreationFormNOTAUTH(String user, String pwd) throws Exception {
             mockMvc.perform(post("/customers/new")
                             .param("customerName", "Foo Customer2")
                             .with(httpBasic(user, pwd)))
@@ -67,10 +67,10 @@ public class CustomerControllerIT extends BaseIT {
         }
 
         @Test
-        void processCreationFormNOAUTH() throws Exception{
+        void processCreationFormNOAUTH() throws Exception {
             mockMvc.perform(post("/customers/new")
                             .param("customerName", "Foo Customer"))
                     .andExpect(status().isUnauthorized());
         }
-    }*/
+    }
 }
