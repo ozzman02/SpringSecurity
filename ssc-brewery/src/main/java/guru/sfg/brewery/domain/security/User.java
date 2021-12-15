@@ -1,6 +1,10 @@
 package guru.sfg.brewery.domain.security;
 
 import lombok.*;
+import org.springframework.security.core.CredentialsContainer;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -12,7 +16,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @Builder
 @Entity
-public class User {
+public class User implements UserDetails, CredentialsContainer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,13 +34,39 @@ public class User {
     private Set<Role> roles;
 
     @Transient
-    private Set<Authority> authorities;
-
-    public Set<Authority> getAuthorities() {
+    public Set<GrantedAuthority> getAuthorities() {
         return this.roles.stream()
                 .map(Role::getAuthorities)
                 .flatMap(Set::stream)
+                .map(authority -> {
+                    return new SimpleGrantedAuthority(authority.getPermission());
+                })
                 .collect(Collectors.toSet());
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return this.accountNonExpired;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return this.accountNonLocked;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return this.credentialsNonExpired;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return this.enabled;
+    }
+
+    @Override
+    public void eraseCredentials() {
+        this.password = null;
     }
 
     @Builder.Default
@@ -50,4 +80,5 @@ public class User {
 
     @Builder.Default
     private Boolean enabled = true;
+
 }
