@@ -8,7 +8,6 @@ import guru.sfg.brewery.web.model.BeerOrderDto;
 import guru.sfg.brewery.web.model.BeerOrderPagedList;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
