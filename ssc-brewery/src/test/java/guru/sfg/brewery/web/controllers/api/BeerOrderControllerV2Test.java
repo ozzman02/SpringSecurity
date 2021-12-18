@@ -10,7 +10,6 @@ import guru.sfg.brewery.repositories.BeerRepository;
 import guru.sfg.brewery.repositories.CustomerRepository;
 import guru.sfg.brewery.web.controllers.BaseIT;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,7 +22,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-public class BeerOrderControllerV2Test extends BaseIT {
+class BeerOrderControllerV2Test extends BaseIT {
     public static final String API_ROOT = "/api/v2/orders/";
 
     @Autowired
@@ -79,7 +78,6 @@ public class BeerOrderControllerV2Test extends BaseIT {
     }
 
 
-    @Disabled
     @Transactional
     @Test
     void getByOrderIdNotAuth() throws Exception {
@@ -89,7 +87,6 @@ public class BeerOrderControllerV2Test extends BaseIT {
                 .andExpect(status().isUnauthorized());
     }
 
-    @Disabled
     @Transactional
     @WithUserDetails("spring")
     @Test
@@ -100,7 +97,6 @@ public class BeerOrderControllerV2Test extends BaseIT {
                 .andExpect(status().is2xxSuccessful());
     }
 
-    @Disabled
     @Transactional
     @WithUserDetails(DefaultBreweryLoader.STPETE_USER)
     @Test
@@ -111,7 +107,6 @@ public class BeerOrderControllerV2Test extends BaseIT {
                 .andExpect(status().is2xxSuccessful());
     }
 
-    @Disabled
     @Transactional
     @WithUserDetails(DefaultBreweryLoader.DUNEDIN_USER)
     @Test
@@ -119,6 +114,6 @@ public class BeerOrderControllerV2Test extends BaseIT {
         BeerOrder beerOrder = stPeteCustomer.getBeerOrders().stream().findFirst().orElseThrow();
 
         mockMvc.perform(get(API_ROOT + beerOrder.getId()))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isNotFound());
     }
 }
