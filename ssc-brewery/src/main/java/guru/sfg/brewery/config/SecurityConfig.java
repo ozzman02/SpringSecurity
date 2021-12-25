@@ -58,7 +58,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .anyRequest().authenticated()
                 .and()
-                .formLogin().and()
+                .formLogin(httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer
+                        .loginProcessingUrl("/login")
+                        .loginPage("/").permitAll()
+                        .successForwardUrl("/")
+                        .defaultSuccessUrl("/"))
+                .logout(httpSecurityLogoutConfigurer -> httpSecurityLogoutConfigurer
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout","GET"))
+                        .logoutSuccessUrl("/").permitAll())
                 .httpBasic()
                 .and().csrf().ignoringAntMatchers("/h2-console/**", "/api/**");
 
