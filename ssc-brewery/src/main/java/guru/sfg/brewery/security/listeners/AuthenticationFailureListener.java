@@ -51,7 +51,7 @@ public class AuthenticationFailureListener {
 
     private void lockedUserAccount(User user) {
         List<LoginFailure> failures = loginFailureRepository
-                .findAllByCreatedDateIsAfter(user, Timestamp.valueOf(LocalDateTime.now().minusDays(1)));
+                .findAllByUserAndCreatedDateIsAfter(user, Timestamp.valueOf(LocalDateTime.now().minusDays(1)));
         if (failures.size() > 3) {
             log.debug("Locking User Account");
             user.setAccountNonLocked(false);

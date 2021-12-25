@@ -67,14 +67,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and()
                 .formLogin(httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer
-                        .loginProcessingUrl("/login")
-                        .loginPage("/").permitAll()
-                        .successForwardUrl("/")
-                        .defaultSuccessUrl("/")
-                        .failureUrl("/?error"))
+                            .loginProcessingUrl("/login")
+                            .loginPage("/").permitAll()
+                            .successForwardUrl("/")
+                            .defaultSuccessUrl("/")
+                            .failureUrl("/?error")
+                )
                 .logout(httpSecurityLogoutConfigurer -> httpSecurityLogoutConfigurer
-                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout","GET"))
-                        .logoutSuccessUrl("/?logout").permitAll())
+                            .logoutRequestMatcher(new AntPathRequestMatcher("/logout","GET"))
+                            .logoutSuccessUrl("/?logout").permitAll()
+                )
                 .httpBasic()
                 .and().csrf().ignoringAntMatchers("/h2-console/**", "/api/**")
                 .and().rememberMe().tokenRepository(persistentTokenRepository).userDetailsService(userDetailsService); // Persistent Token Remember Me
