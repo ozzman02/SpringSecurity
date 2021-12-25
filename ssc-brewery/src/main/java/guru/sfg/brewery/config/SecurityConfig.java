@@ -77,11 +77,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         .logoutSuccessUrl("/?logout").permitAll())
                 .httpBasic()
                 .and().csrf().ignoringAntMatchers("/h2-console/**", "/api/**")
-                .and()
-                .rememberMe()
-                    .tokenRepository(persistentTokenRepository)
-                    .userDetailsService(userDetailsService);
-                //.and().rememberMe().key("sfg-key").userDetailsService(userDetailsService); Simple Hash-Based Token Remember Me
+                .and().rememberMe().tokenRepository(persistentTokenRepository).userDetailsService(userDetailsService); // Persistent Token Remember Me
+                //.and().rememberMe().key("sfg-key").userDetailsService(userDetailsService); //Simple Hash-Based Token Remember Me
 
         /* H2 Console configuration */
         http.headers().frameOptions().sameOrigin();
